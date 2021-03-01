@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { ADD_TODO } from '../graphql/mutations/addTodo'
 import { useHistory } from 'react-router';
-import { useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { ME_QUERY } from '../graphql/queries/me';
+import { GET_TODOS } from '../graphql/queries/listingTodo';
 
 function AddTodo() {
     const history = useHistory();
@@ -11,6 +12,18 @@ function AddTodo() {
     const [addTodo] = useMutation(ADD_TODO, {
         variables: {
             content
+        },
+        update: (store, { data }) => {
+            const  todos  =  store.readQuery({
+                query: GET_TODOS
+            });
+            store.writeQuery({
+                query: GET_TODOS,
+                data: {
+                  listing:  [ ...todos.listing, data.addTodo ]
+                  
+                }
+            });
         },
         onCompleted: () => {
             history.push('/')

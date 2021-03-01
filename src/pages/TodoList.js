@@ -40,9 +40,31 @@ function TodoListing() {
                          variables: {
                              id: parseInt(id),
                              content: todo
+                         },
+                         update: (store) => {
+                            const  todos  =  store.readQuery({
+                                query: GET_TODOS
+                            });
+                            // eslint-disable-next-line array-callback-return
+                            const updateTodoListing = todos.listing.map(pickedTodo => {
+                                if(pickedTodo.id ===  parseInt(id)){
+                                    return {
+                                        ...pickedTodo,
+                                        content: todo
+                                    }
+                                }
+                                return pickedTodo
+                            })
+                            store.writeQuery({
+                                query: GET_TODOS,
+                                data: {
+                                    listing: updateTodoListing
+                                }
+                            });
                          }
                      })
-                     setTodo("")}
+                     setTodo("")
+                    }
                     }
                     type="submit">アップデート</button>
                  </div>
